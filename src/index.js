@@ -1,72 +1,90 @@
 module.exports = function solveSudoku(matrix) {
-  var potentialNum=[1,2,3,4,5,6,7,8,9];
-   var zeroArr = [];
-    
 
-   function solver(){
-         for(var i = 0; i < zeroArr.length; i++){
-           for(var j = 0; j < potentialNum.length; j++){
-             if(checkSquare(zeroArr[i], potentialNum[j])!=false && checkRow(zeroArr[i], potentialNum[j])!=false && checkCol(zeroArr[i], potentialNum[j])!=false){    
-              matrix[zeroArr[i][0]][zeroArr[i][1]] = potentialNum[j];
-             }
-           }
-         }
-   }
-   var finder = function (){
-     for(var i = 0; i<matrix.length; i++){
-       for(var j = 0; j< matrix[i].length; j++){
-         if(matrix[i][j] == 0){
-           zeroArr.push([i,j]);
-         } 
-       }
-     }
-   }();
-  //  console.log(zeroArr[0][1]);
-   function checkRow(position,number){
-     for(var i = 0; i<matrix.length; i++){
-       if(matrix[position[0]][i]==number){
-         return false;
-       }
-     }
-   }
+  var row;
+  var col;
+  if(!finder(matrix)){
+    return matrix;
+  }
+  for(var num = 1; num<=9; num++){
+    if(checker(matrix, row, col, num)){
+      matrix[row][col] = num;
+      if(solveSudoku(matrix)) return matrix;
+      matrix[row][col] = 0;
+    }
+  }
+  return false;
 
-   function checkCol(position,number){
-     for(var i = 0; i<matrix.length; i++){
-       if(matrix[i][position[1]]==number){
-         return false;
-       }
-     }
-   }
-   function checkSquare(position,number){
-     var startRow = position[0]/3;
-     var startCol = position[1]/3;
-     if(startRow <1){
-       startRow=0;
-     }else if(startRow >=1 && startRow <2){
-       startRow=3;
-     }else{
-       startRow=6;
-     };
-     if(startCol <1){
-       startCol=0;
-     }else if(startCol >=1 && startCol <2){
-       startCol=3;
-     }else{
-       startCol=6;
-     };    
-     for(var i = startRow; i < startRow + 3; i++){
-       for(var j = startCol; j< startCol + 3; j++){
-         // console.log(matrix[i][j]);
-         if(matrix[i][j]==number){
-           return false;
-         }
-       }
-     }
-   };
-   solver();
 
-   return matrix;
+  function finder (matrix){
+  for(var i = 0; i<matrix.length; i++){
+    for(var j = 0; j< matrix[i].length; j++){
+      if(matrix[i][j] == 0){
+        row = [i];
+        col = [j];
+        // console.log(row);
+        return true;
+      } 
+    }
+  }
+  return false;
+  }
 
+  function checker(matrix, row, col, num){
+  if(checkSquare(matrix, row, col, num)==true && checkRow(matrix, row, col ,num)==true && checkCol(matrix, row, col,num)==true){
+    return true;
+  }
+  return false;
+  }
+
+
+  function checkSquare(matrix, row, col, num){
+    var startRow = row/3;
+    var startCol = col/3;
+    if(startRow <1){
+      startRow=0;
+    }else if(startRow >=1 && startRow <2){
+      startRow=3;
+    }else{
+      startRow=6;
+    };
+    if(startCol <1){
+      startCol=0;
+    }else if(startCol >=1 && startCol <2){
+      startCol=3;
+    }else{
+      startCol=6;
+    };    
+    for(var i = startRow; i < startRow + 3; i++){
+      for(var j = startCol; j< startCol + 3; j++){
+        if(matrix[i][j]==num){
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+
+  function checkRow(matrix, row, col ,num){
+    for(var i = 0; i < matrix.length; i++){
+      // console.log(row);
+      if(matrix[row][i]==num){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function checkCol(matrix, row, col,num){
+    for(var i = 0; i<matrix.length; i++){
+      if(matrix[i][col]==num){
+        return false;
+      }
+    }
+    return true;
+  }
+
+ 
 };
 
 // solveSudoku([
